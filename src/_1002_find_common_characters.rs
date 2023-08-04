@@ -7,28 +7,31 @@
 // @lc code=start
 impl Solution {
     pub fn common_chars(words: Vec<String>) -> Vec<String> {
-        use std::collections::{HashSet,HashMap};
+      let char_to_index = |c: char|(c as u8 - 'a' as u8) as usize;
+      let index_to_string = |c: usize|char::from(c as u8 + 'a' as u8).to_string();
 
-        let mut map : HashMap::<String, i8> = HashMap::<String, i8>::new();
-        let words_len = words.len() as i8;
+      let mut output : Vec<String> = vec![];
+      let mut min_freq : Vec<u8> = vec![std::u8::MAX; 26];
 
-        for word in words {
-            let mut char_set: HashSet::<char> = HashSet::<char>::new();
-            for c in word.chars() {
-                if char_set.contains(&c) {
-                    continue;
-                } else {
-                    char_set.insert(c);
-                }
-            }
-            for ch in char_set {
-                let c = ch.to_string();
-                let count = map.get(&c).unwrap_or(&0) + 1;
-                map.insert(c, count);
-            }
+      for word in words {
+        let mut char_freq : Vec<u8> = vec![0; 26];
+        for c in word.chars() {
+            char_freq[char_to_index(c)] += 1;
         }
 
-        map.iter().filter(|(_key, value) | **value == words_len as i8).map(|(key, _value)| key.clone()).collect()
+        for index in 0..min_freq.len() {
+            min_freq[index] = std::cmp::min(min_freq[index], char_freq[index]);
+        }
+      }
+
+      for index in 0..min_freq.len() {
+        while min_freq[index] > 0 {
+            output.push(index_to_string(index));
+            min_freq[index] -= 1;
+        }
+      }
+
+      output
     }
 }
 // @lc code=end
