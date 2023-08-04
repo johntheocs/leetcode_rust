@@ -7,27 +7,30 @@
 // @lc code=start
 impl Solution {
     pub fn three_sum(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
+        use std::collections::HashMap;
+
         let mut output: Vec<Vec<i32>> = Vec::new();
         let len = nums.len();
-        //nums.sort();
+
+        let mut map = HashMap::<i32, usize>::new();
+
+        for i in 2..len {
+            map.insert(nums[i], i);
+        }
 
         for i in 0..len - 2 {
-            let (mut j, mut k) = (i + 1, i + 2);
+            for j in i + 1..len - 1 {
+                let offset = 0 - nums[i] - nums[j];
+                if map.contains_key(&offset) {
+                    let index = *map.get(&offset).unwrap();
 
-            while j < len - 1 && j < k {
-                if nums[i] + nums[j] + nums[k] == 0 {
-                    let mut v = vec![nums[i], nums[j], nums[k]];
-                    v.sort();
-                    if !output.contains(&v) {
-                        output.push(v);
+                    if index > j {
+                        let mut v = vec![nums[i], nums[j], nums[index]];
+                        v.sort();
+                        if !output.contains(&v) {
+                            output.push(v);
+                        }
                     }
-                }
-
-                if k < len - 1 {
-                    k += 1;
-                } else {
-                    j += 1;
-                    k = j + 1;
                 }
             }
         }
